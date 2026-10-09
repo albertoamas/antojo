@@ -11,7 +11,7 @@ const enlace = ({ isActive }) =>
   }`
 
 export default function Encabezado() {
-  const { usuario, nombre } = useAuth()
+  const { usuario, nombre, esRestaurante } = useAuth()
   const navigate = useNavigate()
   const [conSombra, setConSombra] = useState(false)
 
@@ -40,8 +40,8 @@ export default function Encabezado() {
         </Link>
         <nav className="flex items-center gap-1">
           <NavLink to="/panel" className={enlace}>
-            <span className="hidden sm:inline">Para restaurantes</span>
-            <span className="sm:hidden">Restaurantes</span>
+            <span className="hidden sm:inline">{esRestaurante ? 'Mi restaurante' : 'Para restaurantes'}</span>
+            <span className="sm:hidden">{esRestaurante ? 'Mi local' : 'Restaurantes'}</span>
           </NavLink>
           {usuario ? (
             <div className="ml-1 flex items-center gap-2">

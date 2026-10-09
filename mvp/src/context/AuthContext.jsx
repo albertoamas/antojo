@@ -23,6 +23,8 @@ export function AuthProvider({ children }) {
       cargando,
       nombre: usuario?.user_metadata?.nombre || usuario?.email?.split('@')[0] || '',
       esAdmin: usuario?.app_metadata?.rol === 'admin',
+      // Solo para la experiencia (qué mostrar primero); los permisos los decide la base de datos
+      esRestaurante: usuario?.user_metadata?.perfil === 'restaurante',
     }
   }, [session, cargando])
 

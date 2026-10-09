@@ -41,13 +41,13 @@ Para probar desde el celular en la misma red wifi: `npm run dev -- --host` y abr
 
 ## Preparar la demo
 
-**Asignar un restaurante de ejemplo a una cuenta** (por ejemplo, Burger Lab, que ya tiene reseñas y estadísticas). Primero crear la cuenta en la app y luego, en el SQL Editor:
+Al crear una cuenta, la app pregunta para qué se usará: **"Quiero buscar platos"** (entra al buscador) o **"Tengo un restaurante"** (va directo a registrar su local). Es la misma cuenta por dentro: los permisos los decide la base de datos según quién es dueño de cada local.
 
-```sql
-update public.restaurantes
-set propietario_id = (select id from auth.users where email = 'correo@ejemplo.com')
-where nombre = 'Burger Lab';
-```
+**Cuentas de demostración:**
+
+1. En la app, crear dos cuentas: un dueño ("Tengo un restaurante", nombre *Don Jorge*) y un cliente ("Quiero buscar platos", nombre *Valentina*).
+2. Abrir `supabase/04_cuentas_demo.sql`, cambiar los dos correos y ejecutarlo en el SQL Editor. El dueño queda administrando **Burger Lab**, que ya tiene reseñas y estadísticas.
+3. Si alguna de las cuentas tenía la sesión abierta, salir y volver a ingresar.
 
 **Dar rol de administrador** (puede ver y editar todos los locales). La persona debe salir y volver a ingresar después:
 

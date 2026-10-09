@@ -6,6 +6,6 @@ export default function RequiereSesion({ children }) {
   const { usuario, cargando } = useAuth()
   const { pathname } = useLocation()
   if (cargando) return <Cargando />
-  if (!usuario) return <Navigate to={`/ingresar?volver=${pathname}`} replace />
+  if (!usuario) return <Navigate to={`/ingresar?volver=${pathname}&perfil=restaurante`} replace />
   return children
 }

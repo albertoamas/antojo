@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import { Navigate, useSearchParams } from 'react-router-dom'
 import Aviso from '../components/Aviso.jsx'
 import Logo, { Isotipo } from '../components/Logo.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -12,6 +12,11 @@ const ERRORES = {
   weak_password: 'La contraseña debe tener al menos 6 caracteres.',
   email_not_confirmed: 'Confirma tu correo con el enlace que te enviamos antes de ingresar.',
 }
+
+const PERFILES = [
+  { id: 'comensal', titulo: 'Quiero buscar platos', texto: 'Encuentra y califica los mejores platos cerca de ti.' },
+  { id: 'restaurante', titulo: 'Tengo un restaurante', texto: 'Publica tus platos gratis y mira quién los ve.' },
+]
 
 const BENEFICIOS = [
   'Califica los platos que pruebas y ayuda a otros a elegir.',
@@ -28,9 +33,10 @@ export default function Ingresar() {
   const { usuario } = useAuth()
   const mostrarToast = useToast()
   const [params] = useSearchParams()
-  const navigate = useNavigate()
   const volver = rutaSegura(params.get('volver'))
-  const [modo, setModo] = useState('ingresar')
+  const [modo, setModo] = useState(params.get('modo') === 'crear' ? 'crear' : 'ingresar')
+  const [perfil, setPerfil] = useState(params.get('perfil') === 'restaurante' ? 'restaurante' : 'comensal')
+  const recienCreada = useRef(false)
   const [nombre, setNombre] = useState('')
   const [correo, setCorreo] = useState('')
   const [clave, setClave] = useState('')
@@ -39,17 +45,24 @@ export default function Ingresar() {
   const [error, setError] = useState('')
   const [aviso, setAviso] = useState('')
 
-  if (usuario) return <Navigate to={volver} replace />
+  // A dónde ir al entrar: la página pedida o, si no hay, la de su perfil.
+  // Un restaurante recién registrado va directo a cargar su local.
+  if (usuario) {
+    const esRestaurante = usuario.user_metadata?.perfil === 'restaurante'
+    const destino = params.get('volver') ? volver : esRestaurante ? (recienCreada.current ? '/panel/nuevo' : '/panel') : '/'
+    return <Navigate to={destino} replace />
+  }
 
   async function enviar(e) {
     e.preventDefault()
     setEnviando(true)
     setError('')
     setAviso('')
+    recienCreada.current = modo === 'crear'
     const { data, error: err } =
       modo === 'ingresar'
         ? await supabase.auth.signInWithPassword({ email: correo, password: clave })
-        : await supabase.auth.signUp({ email: correo, password: clave, options: { data: { nombre: nombre.trim() } } })
+        : await supabase.auth.signUp({ email: correo, password: clave, options: { data: { nombre: nombre.trim(), perfil } } })
     setEnviando(false)
     if (err) {
       setError(ERRORES[err.code] ?? `No se pudo continuar: ${err.message}`)
@@ -60,8 +73,12 @@ export default function Ingresar() {
       setModo('ingresar')
       return
     }
-    mostrarToast(modo === 'crear' ? 'Cuenta creada. Ya puedes reseñar platos.' : 'Ingresaste a Antojo.')
-    navigate(volver, { replace: true })
+    if (modo === 'crear') {
+      mostrarToast(perfil === 'restaurante' ? 'Cuenta creada. Ahora registra tu restaurante.' : 'Cuenta creada. Ya puedes reseñar platos.')
+    } else {
+      mostrarToast('Ingresaste a Antojo.')
+    }
+    // La redirección la hace el bloque de arriba en cuanto la sesión queda activa
   }
 
   const crear = modo === 'crear'
@@ -118,9 +135,33 @@ export default function Ingresar() {
 
         <form onSubmit={enviar} className="mt-6 flex flex-col gap-4">
           {crear ? (
+            <fieldset className="animar-aparecer">
+              <legend className="etiqueta">¿Para qué usarás Antojo?</legend>
+              <div className="grid grid-cols-2 gap-2">
+                {PERFILES.map((p) => (
+                  <label
+                    key={p.id}
+                    className={`relative flex cursor-pointer flex-col gap-1 rounded-2xl border-2 p-3 transition-[border-color,background-color,transform] duration-200 active:scale-[0.98] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-vino ${
+                      perfil === p.id ? 'border-vino bg-vino-suave/60' : 'border-linea bg-white hover:border-vino/40'
+                    }`}
+                  >
+                    <input type="radio" name="perfil" value={p.id} checked={perfil === p.id} onChange={() => setPerfil(p.id)} className="sr-only" />
+                    <span className="flex items-center gap-1.5">
+                      <span className={`grid size-4 shrink-0 place-items-center rounded-full border-2 ${perfil === p.id ? 'border-vino' : 'border-linea'}`} aria-hidden="true">
+                        {perfil === p.id ? <span className="size-2 rounded-full bg-vino" /> : null}
+                      </span>
+                      <span className="text-sm leading-tight font-bold">{p.titulo}</span>
+                    </span>
+                    <span className="text-xs leading-snug text-gris">{p.texto}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          ) : null}
+          {crear ? (
             <div className="animar-aparecer">
               <label htmlFor="nombre" className="etiqueta">
-                Tu nombre
+                {perfil === 'restaurante' ? 'Tu nombre (no el del local)' : 'Tu nombre'}
               </label>
               <input id="nombre" required maxLength={60} value={nombre} onChange={(e) => setNombre(e.target.value)} className="campo" autoComplete="name" placeholder="Así aparecerá en tus reseñas" />
             </div>
