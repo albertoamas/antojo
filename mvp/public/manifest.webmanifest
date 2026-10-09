@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "Antojo · Busca el plato, no el restaurante",
+  "short_name": "Antojo",
+  "description": "Los mejores platos de Tarija, comparados por sabor y precio.",
+  "lang": "es",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafaf7",
+  "theme_color": "#7a1f3d",
+  "categories": ["food", "lifestyle"],
+  "icons": [
+    { "src": "/iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/iconos/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/marca/antojo-icono-app.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Buscar hamburguesas", "short_name": "Hamburguesas", "url": "/?q=Hamburguesa", "icons": [{ "src": "/iconos/icono-192.png", "sizes": "192x192" }] },
+    { "name": "Mi restaurante", "short_name": "Mi restaurante", "url": "/panel", "icons": [{ "src": "/iconos/icono-192.png", "sizes": "192x192" }] }
+  ]
+}

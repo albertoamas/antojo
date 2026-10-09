@@ -1,0 +1,136 @@
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/figtree";
+@import "tailwindcss";
+
+/* Identidad "Vino y ají" (docs/08-gestion-del-proyecto.md, decisión D7) */
+@theme {
+  --color-vino: #7a1f3d;
+  --color-vino-oscuro: #5c1730;
+  --color-vino-suave: #f3e6eb;
+  --color-aji: #f4b43c;
+  --color-aji-suave: #fcf0d4;
+  --color-vinedo: #3e6b48;
+  --color-vinedo-suave: #e5efe7;
+  --color-fondo: #fafaf7;
+  --color-tinta: #231a20;
+  --color-gris: #6e6469;
+  --color-linea: #e8e3e5;
+
+  --font-display: "Bricolage Grotesque Variable", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Figtree Variable", "Segoe UI", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-fondo text-tinta font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-vino;
+  }
+}
+
+@layer components {
+  .boton {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-vino px-4 py-2.5 font-semibold text-white shadow-[0_2px_0_var(--color-vino-oscuro)] transition-[background-color,transform,box-shadow] duration-150 hover:bg-vino-oscuro active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .boton-secundario {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-linea bg-white px-4 py-2.5 font-semibold text-tinta transition-[border-color,color,transform] duration-150 hover:border-vino hover:text-vino active:translate-y-0.5 disabled:opacity-50;
+  }
+  .campo {
+    @apply w-full rounded-xl border border-linea bg-white px-3.5 py-2.5 text-base text-tinta placeholder:text-gris/70 focus:border-vino focus:outline-none focus:ring-2 focus:ring-vino/15;
+  }
+  .etiqueta {
+    @apply mb-1.5 block text-sm font-semibold text-tinta;
+  }
+  .chip {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-linea bg-white px-3 py-1.5 text-sm font-medium text-tinta transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-px hover:border-vino active:translate-y-0;
+  }
+  .chip-activo {
+    @apply border-vino bg-vino text-white hover:border-vino;
+  }
+}
+
+/* ---------- Movimiento ----------
+   Un solo gesto de marca: el sello se "estampa". Lo demás entra suave y rápido. */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes estampar {
+  0% { opacity: 0; transform: scale(1.55) rotate(-16deg); }
+  55% { opacity: 1; transform: scale(0.9) rotate(4deg); }
+  80% { transform: scale(1.04) rotate(-1deg); }
+  100% { transform: none; }
+}
+@keyframes brillo {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes pulso {
+  0% { box-shadow: 0 0 0 0 rgb(62 107 72 / 0.45); }
+  70% { box-shadow: 0 0 0 8px rgb(62 107 72 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(62 107 72 / 0); }
+}
+@keyframes resaltar {
+  0% { background-color: var(--color-aji-suave); }
+  100% { background-color: transparent; }
+}
+@keyframes subir-toast {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes flotar {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+@layer utilities {
+  .animar-pagina { animation: aparecer 0.35s ease-out both; }
+  .animar-aparecer { animation: aparecer 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: var(--retraso, 0ms); }
+  .animar-estampar { animation: estampar 0.6s cubic-bezier(0.3, 0.8, 0.3, 1.2) both; animation-delay: var(--retraso, 0ms); }
+  .animar-resaltar { animation: resaltar 2.4s ease-out both; }
+  .animar-flotar { animation: flotar 5s ease-in-out infinite; }
+  .punto-abierto { animation: pulso 2s ease-out infinite; }
+  .esqueleto {
+    background: linear-gradient(90deg, var(--color-linea) 0%, #f4f0f2 50%, var(--color-linea) 100%);
+    background-size: 200% 100%;
+    animation: brillo 1.4s linear infinite;
+  }
+  .fondo-patron {
+    background-image: url('/marca/antojo-patron-sellos.svg');
+    background-size: 120px 104px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 767px) {
+  body.con-barra-inferior {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media print {
+  .no-imprimir {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}

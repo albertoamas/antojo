@@ -1,0 +1,21 @@
+# Dependencias y compilados
+node_modules/
+dist/
+
+# Claves y configuración local (nunca subir)
+.env
+.env.*
+!.env.example
+*.local
+
+# Configuración personal de Claude Code
+.claude/settings.local.json
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.log
+.vercel
