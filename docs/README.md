@@ -29,7 +29,7 @@ Flujo de trabajo: **propuesta → validación de negocio → ingeniería de requ
 |---|---|---|---|
 | Lean Canvas | 35 % | [Fase 3](03-modelo-de-negocio.md) | Contenido listo; falta la versión visual |
 | MVP | 35 % | [Fase 5](05-ingenieria-de-requisitos.md) (requisitos) y [Fase 6](06-desarrollo-mvp.md) (desarrollo) | MVP construido en `mvp/`; falta cargar la base de datos y publicarlo |
-| Pitch | 30 % | — | Pendiente |
+| Pitch | 30 % | [Fase 6, sección 6.5](06-desarrollo-mvp.md#65-pitch-y-demo) y la ruta `/pitch` de la app | Listo: 1 min de pitch + 1 min de demo por persona |
 
 ### Anexos
 

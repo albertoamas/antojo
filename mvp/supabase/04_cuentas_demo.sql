@@ -11,8 +11,8 @@
 
 do $$
 declare
-  correo_dueno   text := 'dueno@ejemplo.com';    -- ← cambiar
-  correo_cliente text := 'cliente@ejemplo.com';  -- ← cambiar
+  correo_dueno   text := 'alberto@gmail.com';    -- ← cambiar
+  correo_cliente text := 'cecilia@gmail.com';  -- ← cambiar
   id_dueno   uuid;
   id_cliente uuid;
 begin

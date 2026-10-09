@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7A1F3D">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>Pitch Antojo · Comensales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Presentación de una sola identidad (manual "Vino y ají"): colores fijos, no cambia con el tema.
+   Lienzo 1280×720 escalado al tamaño de la ventana. */
+:root{
+  --vino:#7a1f3d; --vino-oscuro:#5c1730; --vino-suave:#f3e6eb;
+  --aji:#f4b43c; --aji-suave:#fcf0d4; --aji-sombra:#c98d1d;
+  --vinedo:#3e6b48; --vinedo-suave:#e5efe7;
+  --fondo:#fafaf7; --tinta:#231a20; --gris:#6e6469; --linea:#e8e3e5;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-texto:"Figtree","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:#2a2026;color:var(--tinta);font-family:var(--f-texto);overflow:hidden}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;letter-spacing:-.02em}
+
+/* Escenario */
+.escenario{position:fixed;inset:0;display:grid;place-items:center;padding:56px 16px 64px}
+.lienzo{width:1280px;height:720px;position:relative;transform-origin:center;flex:none}
+.slide{position:absolute;inset:0;border-radius:18px;overflow:hidden;background:var(--fondo);padding:64px 80px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+.slide.activa{opacity:1;visibility:visible}
+.slide.oscura{background:var(--vino);color:#fff}
+.slide .num{position:absolute;right:40px;bottom:28px;font-size:14px;color:var(--gris);font-variant-numeric:tabular-nums}
+.slide.oscura .num{color:var(--vino-suave)}
+.marca{position:absolute;left:80px;bottom:26px;display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:800;font-size:20px;color:var(--vino)}
+.slide.oscura .marca{color:#fff}
+.marca svg{width:22px;height:22px}
+
+/* Entradas: cada elemento con .e aparece en cascada al llegar a la diapositiva */
+.slide .e{opacity:0;transform:translateY(14px)}
+.slide.activa .e{animation:entrar .55s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--i,0) * 110ms + 120ms)}
+@keyframes entrar{to{opacity:1;transform:none}}
+.slide.activa .estampar{animation:estampar .7s cubic-bezier(.3,.8,.3,1.2) forwards;animation-delay:calc(var(--i,0) * 110ms + 150ms)}
+@keyframes estampar{0%{opacity:0;transform:scale(1.6) rotate(-16deg)}55%{opacity:1;transform:scale(.92) rotate(4deg)}100%{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide .e,.slide.activa .e,.slide.activa .estampar{animation:none;opacity:1;transform:none}.slide{transition:none}}
+
+/* Tipografía de diapositiva */
+.etiqueta{font-weight:700;font-size:18px;color:var(--vino)}
+.oscura .etiqueta{color:var(--aji)}
+.titulo{font-size:58px;line-height:1.02;font-weight:800;margin-top:14px;max-width:20ch}
+.titulo.xl{font-size:92px;line-height:.95;max-width:none}
+.bajada{font-size:24px;line-height:1.4;color:var(--gris);margin-top:18px;max-width:46ch}
+.oscura .bajada{color:var(--vino-suave)}
+.resaltado{color:var(--vino)}
+.oscura .resaltado{color:var(--aji)}
+
+/* Sello */
+.sello{position:relative;display:grid;place-items:center;border-radius:50%;background:var(--aji);color:var(--vino-oscuro);font-family:var(--f-display);font-weight:800;box-shadow:0 3px 0 var(--aji-sombra);flex:none}
+.sello::after{content:"";position:absolute;inset:9%;border-radius:50%;border:2.5px dashed rgba(92,23,48,.45)}
+
+/* Componentes */
+.fila{display:flex;gap:24px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:36px}
+.tarjeta{background:#fff;border:1px solid var(--linea);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:10px}
+.oscura .tarjeta{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+.tarjeta h3{font-size:26px;line-height:1.1}
+.tarjeta p{font-size:19px;line-height:1.45;color:var(--gris)}
+.oscura .tarjeta p{color:var(--vino-suave)}
+.cifra{font-family:var(--f-display);font-weight:800;font-size:76px;line-height:.9;color:var(--vino);font-variant-numeric:tabular-nums}
+.oscura .cifra{color:var(--aji)}
+.paso{font-family:var(--f-display);font-weight:800;font-size:22px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--vino);color:#fff}
+.cita{font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1.25;border-left:6px solid var(--aji);padding-left:22px;max-width:30ch}
+.pie-fuente{margin-top:auto;font-size:15px;color:var(--gris)}
+.oscura .pie-fuente{color:var(--vino-suave)}
+
+/* Tabla comparativa */
+table{border-collapse:collapse;width:100%;margin-top:30px;font-size:20px}
+th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--linea)}
+th{font-size:16px;color:var(--gris);font-weight:600}
+td.si{color:var(--vinedo);font-weight:700}
+td.no{color:var(--gris)}
+tr.nos td{background:var(--vino-suave);font-weight:700}
+tr.nos td:first-child{border-radius:12px 0 0 12px}
+tr.nos td:last-child{border-radius:0 12px 12px 0}
+
+/* Lean canvas */
+.canvas{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:1fr 1fr .78fr;grid-template-areas:"pr so pv va se" "pr me pv ca se" "co co co in in";gap:3px;background:var(--tinta);border:3px solid var(--tinta);border-radius:14px;overflow:hidden;margin-top:18px;flex:1}
+.cv{background:#fff;padding:12px 14px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.cv b{font-family:var(--f-display);font-size:15px;color:var(--vino);display:flex;gap:6px}
+.cv b i{font-style:normal;color:var(--gris)}
+.cv p{font-size:13.5px;line-height:1.35}
+.cv.pv{background:var(--aji-suave)}
+.cv.pv p.grande{font-family:var(--f-display);font-weight:800;font-size:19px;line-height:1.2}
+.pr{grid-area:pr}.so{grid-area:so}.pv{grid-area:pv}.va{grid-area:va}.se{grid-area:se}.me{grid-area:me}.ca{grid-area:ca}.co{grid-area:co}.in{grid-area:in}
+
+/* Precios */
+.planes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.plan{background:#fff;border:2px solid var(--linea);border-radius:22px;padding:28px;display:flex;flex-direction:column;gap:10px}
+.plan.dest{border-color:var(--vino);box-shadow:0 18px 40px -26px rgba(122,31,61,.6)}
+.plan .precio{font-family:var(--f-display);font-weight:800;font-size:54px;line-height:1}
+.plan .precio small{font-size:20px;color:var(--gris);font-weight:600}
+.plan p{font-size:18px;line-height:1.45;color:var(--gris)}
+.chip{align-self:flex-start;background:var(--vino);color:#fff;font-weight:700;font-size:14px;padding:4px 12px;border-radius:999px}
+
+/* Maqueta de celular */
+.celular{width:300px;height:560px;border-radius:40px;background:var(--tinta);padding:12px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6);flex:none}
+.pantalla{width:100%;height:100%;border-radius:30px;background:var(--fondo);overflow:hidden;padding:22px 16px;display:flex;flex-direction:column;gap:10px}
+.pantalla .q{font-family:var(--f-display);font-weight:800;font-size:22px;line-height:1.05}
+.pantalla .buscar{border:2px solid var(--vino);border-radius:12px;padding:8px 10px;font-size:14px;font-weight:600;background:#fff}
+.item{display:grid;grid-template-columns:44px 1fr auto;gap:8px;align-items:center;background:#fff;border-radius:12px;padding:6px}
+.item .foto{width:44px;height:44px;border-radius:9px;background:var(--aji-suave)}
+.item b{font-size:13px;display:block;line-height:1.15}
+.item small{font-size:11px;color:var(--gris)}
+.item .sello{width:34px;height:34px;font-size:12px}
+
+/* Controles */
+.barra{position:fixed;left:0;right:0;bottom:0;height:52px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;color:#e9dfe4;font-size:14px}
+.barra button{background:rgba(255,255,255,.1);border:0;color:#fff;font:600 14px var(--f-texto);padding:8px 12px;border-radius:10px;cursor:pointer}
+.barra button:hover{background:rgba(255,255,255,.2)}
+.barra button:focus-visible{outline:2px solid var(--aji);outline-offset:2px}
+.izq,.der{display:flex;align-items:center;gap:8px}
+.reloj{font-variant-numeric:tabular-nums;font-weight:700;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.08)}
+.reloj.tarde{background:var(--aji);color:var(--vino-oscuro)}
+.progreso{position:fixed;left:0;top:0;height:5px;background:var(--aji);transition:width .4s ease}
+.arriba{position:fixed;top:12px;left:16px;right:16px;display:flex;justify-content:space-between;color:#cbbcc4;font-size:13px}
+.notas{position:fixed;left:50%;bottom:60px;transform:translateX(-50%);width:min(860px,calc(100vw - 32px));max-height:40vh;overflow:auto;background:#fff;color:var(--tinta);border-radius:16px;padding:18px 22px;box-shadow:0 20px 50px rgba(0,0,0,.45);font-size:16px;line-height:1.55}
+.notas h4{margin:0 0 6px;font-family:var(--f-display);font-size:16px;color:var(--vino)}
+.listo{position:fixed;top:38px;left:50%;transform:translateX(-50%);background:var(--aji);color:var(--vino-oscuro);font-weight:700;font-size:14px;padding:6px 14px;border-radius:999px;z-index:5}
+.ir{display:inline-flex;align-items:center;gap:12px;background:var(--aji);color:var(--vino-oscuro);font-family:var(--f-display);font-weight:800;font-size:28px;padding:18px 30px;border-radius:18px;text-decoration:none;box-shadow:0 4px 0 var(--aji-sombra);margin-top:34px;align-self:flex-start}
+.ir:hover{transform:translateY(-2px)}
+.ir:focus-visible{outline:3px solid #fff;outline-offset:3px}
+/* Versión de 1 minuto: piezas compactas */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chip2{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--linea);border-radius:999px;padding:9px 16px;font-weight:700;font-size:19px}
+.chip2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--aji);box-shadow:0 0 0 2px var(--vino) inset}
+.cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px}
+.cifras p{font-size:21px;line-height:1.35;color:var(--gris);margin-top:10px}
+.oscura .cifras p{color:var(--vino-suave)}
+table.compacta{font-size:19px;margin-top:22px}
+table.compacta th,table.compacta td{padding:11px 14px}
+.mini-planes{display:flex;gap:14px;margin-top:22px}
+.mini-plan{flex:1;border-radius:16px;background:#fff;border:2px solid var(--linea);padding:14px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.mini-plan.dest{border-color:var(--vino)}
+.mini-plan b{font-size:18px}
+.mini-plan span{font-family:var(--f-display);font-weight:800;font-size:30px}
+.mini-plan small{font-size:14px;color:var(--gris);font-weight:600}
+/* Versión de venta: viñetas con el sello */
+.beneficios{list-style:none;padding:0;margin:30px 0 0;display:flex;flex-direction:column;gap:18px}
+.beneficios li{display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:start;font-size:24px;line-height:1.3}
+.beneficios li svg{width:34px;height:34px;margin-top:-2px}
+.beneficios li b{display:block}
+.beneficios li span{font-size:19px;color:var(--gris)}
+.pregunta{font-size:84px;line-height:.98;font-weight:800;letter-spacing:-.03em;max-width:16ch}
+.dato{display:flex;align-items:baseline;gap:16px;margin-top:34px}
+.dato .cifra{font-size:84px}
+.dato p{font-size:24px;line-height:1.3;color:var(--vino-suave);max-width:24ch}
+.oferta{display:inline-block;background:var(--aji);color:var(--vino-oscuro);font-family:var(--f-display);font-weight:800;font-size:22px;padding:6px 16px;border-radius:999px;transform:rotate(-2deg)}
+@media (max-width:700px){.arriba .ayuda{display:none}.barra .ocultable{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="mordida" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><circle cx="72.8" cy="3.26" r="12.5" fill="#000"/><circle cx="87.41" cy="13.88" r="12.5" fill="#000"/><circle cx="97.5" cy="28.85" r="12.5" fill="#000"/></mask>
+    <symbol id="isotipo" viewBox="0 0 100 100"><g mask="url(#mordida)"><circle cx="50" cy="50" r="46" fill="#F4B43C"/><circle cx="50" cy="50" r="33" fill="none" stroke="#7A1F3D" stroke-width="4.5" stroke-dasharray="6.2 5"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="progreso" id="progreso"></div>
+<div class="arriba"><span>Antojo · Pitch para comensales · Cecilia</span><span class="ayuda">← → para avanzar · N notas · F pantalla completa</span></div>
+
+<main class="escenario" id="escenario">
+<div class="lienzo" id="lienzo">
+
+<!-- 1 · Gancho (10 s) -->
+<section class="slide oscura" data-seg="10" data-notas="«Hola, soy Cecilia, de Antojo. ¿Te pasó? Fuiste a un lugar con 4,5 estrellas, pediste… y el plato no valía lo que pagaste.»">  <div style="display:flex;align-items:center;gap:12px" class="e"><svg width="46" height="46"><use href="#isotipo"/></svg><span style="font-family:var(--f-display);font-weight:800;font-size:32px">antojo</span></div>
+  <h1 class="pregunta e" style="--i:1;margin-top:auto">4,5 estrellas… y el plato, una decepción.</h1>
+  <p class="bajada e" style="--i:2;font-size:26px">Las reseñas califican el lugar, no lo que vas a comer.</p>
+  <p class="pie-fuente e" style="--i:3;margin-top:40px">Cecilia · Equipo fundador de Antojo</p>
+  <span class="num"></span>
+</section>
+
+<!-- 2 · Problema (12 s) -->
+<section class="slide" data-seg="12" data-notas="«Le pasó al 60 % de las personas que encuestamos en Tarija. La mitad decide dónde comer por redes, sin saber si es bueno o si es publicidad. Y cada salida cuesta unos 45 bolivianos.»">  <p class="etiqueta e">El problema</p>
+  <h2 class="titulo e" style="--i:1">Hoy eliges a ciegas.</h2>
+  <div class="grid3"><div class="tarjeta e" style="--i:2"><span class="cifra">60 %</span><h3>Pidió un plato malo</h3><p>En un lugar "bien calificado".</p></div><div class="tarjeta e" style="--i:3"><span class="cifra">53 %</span><h3>Decide por redes</h3><p>Sin saber si es bueno o si pagaron.</p></div><div class="tarjeta e" style="--i:4"><span class="cifra">Bs 45</span><h3>Por salida, en promedio</h3><p>Cada antojo fallido es plata perdida.</p></div></div>
+  <p class="pie-fuente e" style="--i:5">Encuesta a 30 comensales de Tarija, septiembre y octubre de 2026.</p>
+  <span class="num"></span>
+</section>
+
+<!-- 3 · Solución y beneficios (15 s) -->
+<section class="slide" data-seg="15" data-notas="«Antojo es como Trivago, pero de platos. Escribes tu antojo, ves los mejores platos cerca, con su precio, y reseñas verificadas de gente que de verdad comió ahí. En 30 segundos sabes a dónde ir.»">  <div class="fila" style="gap:56px;align-items:center;height:100%">
+    <div style="flex:1">
+      <p class="etiqueta e">La solución</p>
+      <h2 class="titulo e" style="--i:1;font-size:56px">Busca el plato, no el restaurante.</h2>
+      <ul class="beneficios"><li class="e" style="--i:2"><svg><use href="#isotipo"/></svg><p><b>El mejor plato cerca, en 30 segundos</b><span>Escribe "hamburguesa", "saice" o "algo dulce".</span></p></li><li class="e" style="--i:3"><svg><use href="#isotipo"/></svg><p><b>Sabes cuánto vas a gastar</b><span>Precio a la vista y filtro por presupuesto.</span></p></li><li class="e" style="--i:4"><svg><use href="#isotipo"/></svg><p><b>Reseñas en las que puedes confiar</b><span>Verificadas con el QR de la mesa.</span></p></li></ul>
+    </div>
+    <div class="celular e" style="--i:2"><div class="pantalla"><p class="q">¿Qué se te antoja hoy?</p><div class="buscar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a1f3d" stroke-width="3" style="vertical-align:-1px;margin-right:6px" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>algo dulce</div><div class="item"><span class="foto"></span><span><b>Cangrejitos (6 u.)</b><small>Dulce Tarija · Bs 12</small></span><span class="sello estampar" style="--i:4">4,6</span></div><div class="item"><span class="foto"></span><span><b>Torta de chocolate</b><small>Café Viñedo · Bs 18</small></span><span class="sello estampar" style="--i:5">4,3</span></div><div class="item"><span class="foto"></span><span><b>Torta tres leches</b><small>Dulce Tarija · Bs 15</small></span><span class="sello estampar" style="--i:6">4,2</span></div><div class="item"><span class="foto"></span><span><b>Alfajor de maicena</b><small>Dulce Tarija · Bs 6</small></span><span class="sello estampar" style="--i:7">4,0</span></div></div></div>
+  </div>
+  <span class="num"></span>
+</section>
+
+<!-- 4 · Por qué Antojo (10 s) -->
+<section class="slide" data-seg="10" data-notas="«PedidosYa te lo lleva; Antojo te dice qué pedir. Y nadie puede comprar el primer lugar: cuenta el sabor y el precio.»">  <p class="etiqueta e">¿Por qué Antojo?</p>
+  <h2 class="titulo e" style="--i:1">PedidosYa te lo lleva. Antojo te dice qué pedir.</h2>
+  <table class="compacta e" style="--i:2"><thead><tr><th></th><th>Nota por plato</th><th>Compara precios</th><th>Reseñas verificadas</th></tr></thead><tbody><tr><td>PedidosYa / Yango</td><td class="no">No</td><td class="no">Solo en su app</td><td class="no">No</td></tr><tr><td>Google Maps y TikTok</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr><tr class="nos"><td>Antojo</td><td class="si">Sí</td><td class="si">Sí</td><td class="si">Sí, con QR</td></tr></tbody></table>
+  <div class="mini-planes e" style="--i:3"><div class="mini-plan dest"><b>Sabor</b><span>70 %</span></div><div class="mini-plan"><b>Precio</b><span>30 %</span></div><div class="mini-plan"><b>Reseña verificada</b><span>×2</span></div></div>
+  <span class="num"></span>
+</section>
+
+<!-- 5 · Prueba, oferta y paso a la demo (13 s) -->
+<section class="slide oscura" data-seg="13" data-final="1" data-notas="«Es gratis y se instala en tu celular. Casi 9 de cada 10 universitarios de Tarija dicen que la usarían. Te muestro cómo funciona.» → abre el prototipo.<br><br>DEMO (1 min): 1) Buscar «hamburguesa». 2) Filtros: hasta Bs 35 y abierto ahora. 3) Abrir el primer plato: sello, estrellas, reseñas verificadas. 4) «Cómo llegar». 5) Ingresar y dejar una reseña (con el QR queda verificada). 6) Mostrar «Instalar la app».">  <div class="fila" style="align-items:center;gap:56px;height:100%">
+    <div style="flex:1">
+      <p class="etiqueta e"><span style="font-family:var(--f-display);font-size:34px">88 %</span> de los universitarios de Tarija la usaría</p>
+      <h2 class="titulo xl e" style="--i:1;font-size:76px;margin-top:22px">Tu próximo antojo, a un toque.</h2>
+      <p class="e" style="--i:2;margin-top:22px"><span class="oferta">Gratis · se instala en tu celular</span></p>
+      <a class="ir e" style="--i:3" id="irPrototipo" href="/" >Probar Antojo en vivo →</a>
+    </div>
+    <svg width="230" height="230" class="estampar" style="--i:2"><use href="#isotipo"/></svg>
+  </div>
+  <span class="num"></span>
+</section>
+</div>
+</main>
+
+<div class="listo" id="listo">Presiona → para empezar el cronómetro</div>
+<div class="notas" id="notas" hidden><h4 id="notasTitulo">Notas</h4><p id="notasTexto"></p></div>
+
+<nav class="barra" aria-label="Controles de la presentación">
+  <div class="izq">
+    <button type="button" id="ant" aria-label="Diapositiva anterior">← Anterior</button>
+    <button type="button" id="sig" aria-label="Diapositiva siguiente">Siguiente →</button>
+  </div>
+  <div class="der">
+    <span class="reloj" id="reloj" title="Tiempo de pitch transcurrido / tiempo objetivo">0:00 / 1:00 · demo 1:00</span>
+    <button type="button" id="btnNotas" class="ocultable" aria-pressed="false">Notas</button>
+    <button type="button" id="btnPantalla" class="ocultable">Pantalla completa</button>
+  </div>
+</nav>
+
+<script>
+(function () {
+  // Tiempos por persona: 1 minuto de pitch y 1 minuto de demo del MVP.
+  var SEGUNDOS_PITCH = 60; // 1 minuto de pitch
+  var SEGUNDOS_DEMO = 60; // 1 minuto de demo del MVP
+  // Ruta de la app donde empieza la demo del MVP.
+  var DESTINO = '/';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var actual = 0, inicio = null;
+  var lienzo = document.getElementById('lienzo');
+  var notas = document.getElementById('notas');
+  var reloj = document.getElementById('reloj');
+
+  slides.forEach(function (s, i) {
+    var n = s.querySelector('.num');
+    if (n) n.textContent = (i + 1) + ' / ' + slides.length;
+  });
+  document.getElementById('irPrototipo').href = DESTINO;
+
+  function ajustar() {
+    var esc = Math.min((window.innerWidth - 32) / 1280, (window.innerHeight - 120) / 720);
+    lienzo.style.transform = 'scale(' + Math.max(esc, 0.2) + ')';
+  }
+
+  function formato(seg) {
+    var m = Math.floor(seg / 60), s = Math.floor(seg % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function mostrar(i) {
+    actual = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle('activa', j === actual); s.setAttribute('aria-hidden', j === actual ? 'false' : 'true'); });
+    document.getElementById('progreso').style.width = ((actual + 1) / slides.length * 100) + '%';
+    var s = slides[actual];
+    document.getElementById('notasTitulo').textContent = 'Diapositiva ' + (actual + 1) + ' · tiempo sugerido ' + s.dataset.seg + ' s';
+    document.getElementById('notasTexto').innerHTML = s.dataset.notas || '';
+    try { history.replaceState(null, '', '#d' + (actual + 1)); } catch (e) {}
+  }
+
+  function siguiente() {
+    if (inicio === null) {
+      // Primera pulsación: arranca el cronómetro sin avanzar
+      inicio = Date.now();
+      document.getElementById('listo').hidden = true;
+      return;
+    }
+    if (actual === slides.length - 1) {
+      // Fin del pitch: inicia el minuto de demo y pasa al prototipo
+      irADemo();
+      return;
+    }
+    mostrar(actual + 1);
+  }
+  function anterior() { mostrar(actual - 1); }
+
+  function irADemo() {
+    try {
+      sessionStorage.setItem('antojo-demo', JSON.stringify({ inicio: Date.now(), segundos: SEGUNDOS_DEMO, persona: 'Cecilia' }));
+    } catch (e) {}
+    window.location.assign(DESTINO);
+  }
+  document.getElementById('irPrototipo').addEventListener('click', function (e) { e.preventDefault(); irADemo(); });
+
+  document.getElementById('sig').addEventListener('click', siguiente);
+  document.getElementById('ant').addEventListener('click', anterior);
+  document.getElementById('btnNotas').addEventListener('click', function () {
+    notas.hidden = !notas.hidden;
+    this.setAttribute('aria-pressed', String(!notas.hidden));
+  });
+  document.getElementById('btnPantalla').addEventListener('click', function () {
+    var p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+    if (p && p.catch) p.catch(function () {});
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target.closest && e.target.closest('input,textarea')) return;
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].indexOf(e.key) >= 0) { e.preventDefault(); siguiente(); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].indexOf(e.key) >= 0) { e.preventDefault(); anterior(); }
+    else if (e.key === 'Home') mostrar(0);
+    else if (e.key === 'End') mostrar(slides.length - 1);
+    else if (e.key.toLowerCase() === 'n') document.getElementById('btnNotas').click();
+    else if (e.key.toLowerCase() === 'f') document.getElementById('btnPantalla').click();
+  });
+
+  // Deslizar en pantallas táctiles
+  var x0 = null;
+  document.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) (dx < 0 ? siguiente : anterior)();
+    x0 = null;
+  }, { passive: true });
+
+  setInterval(function () {
+    if (inicio === null) return;
+    var seg = (Date.now() - inicio) / 1000;
+    reloj.textContent = formato(seg) + ' / ' + formato(SEGUNDOS_PITCH) + ' · demo ' + formato(SEGUNDOS_DEMO);
+    reloj.classList.toggle('tarde', seg > SEGUNDOS_PITCH);
+    reloj.title = 'Pitch: ' + SEGUNDOS_PITCH + ' s · Demo del MVP: ' + SEGUNDOS_DEMO + ' s';
+  }, 500);
+
+  window.addEventListener('resize', ajustar);
+  ajustar();
+  var desdeHash = parseInt((location.hash.match(/^#d(\d+)$/) || [])[1], 10);
+  mostrar(desdeHash ? desdeHash - 1 : 0);
+})();
+</script>
+</body>
+</html>

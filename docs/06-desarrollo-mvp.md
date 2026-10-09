@@ -87,12 +87,22 @@ flowchart LR
 | Al registrar un local se crea su código QR automáticamente | ✅ |
 | Pruebas de las historias de usuario en el proyecto real | `[PENDIENTE]` |
 
-## 6.5 Guion de la demo `[PENDIENTE]`
+## 6.5 Pitch y demo
 
-Recorrido sugerido para el pitch:
-1. **Comensal:** buscar "hamburguesa" → filtrar hasta Bs 30 → abrir el primer plato → "Cómo llegar".
-2. **QR en vivo:** alguien del público escanea el QR impreso, ingresa y deja una reseña → aparece al instante en la pantalla, marcada como verificada.
-3. **Restaurante:** entrar al panel → responder esa reseña → mostrar las estadísticas.
+Cada integrante tiene **1 minuto de pitch y 1 minuto de demo**. Las presentaciones están dentro de la app, en `/pitch`:
+
+| Presentación | Ruta | A quién le vende | La demo empieza en |
+|---|---|---|---|
+| Alberto | `/pitch/alberto` | Dueño de restaurante (quien paga) | Panel del restaurante (`/panel`) |
+| Cecilia | `/pitch/cecilia` | Comensal (quien usa la app) | Buscador (`/`) |
+
+Estructura de venta de cada pitch (60 s): gancho (10 s) → problema con datos (12 s) → solución y beneficios (15 s) → por qué Antojo (10 s) → prueba, oferta y llamado a la acción (13 s). Al presionar → en la última diapositiva se abre la app y aparece un cronómetro flotante con el minuto de demo.
+
+**Demo de Alberto (restaurante):** Mi restaurante → Burger Lab → estadísticas → responder una reseña → editar un plato → código QR.
+
+**Demo de Cecilia (comensal):** buscar "hamburguesa" → filtros → abrir el primer plato → reseñas verificadas → "Cómo llegar" → dejar una reseña → instalar la app.
+
+Los guiones hablados están en las notas de cada diapositiva (tecla N).
 
 ---
 

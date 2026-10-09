@@ -13,6 +13,7 @@ export default function Pie() {
         <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-gris">
           <Link to="/" className="hover:text-vino">Buscar platos</Link>
           <Link to="/panel" className="hover:text-vino">Para restaurantes</Link>
+          <Link to="/pitch" className="hover:text-vino">Presentación</Link>
           <BotonInstalar />
         </nav>
         <p className="w-full text-xs text-gris">Hecho en Tarija, Bolivia. Ningún restaurante puede pagar para cambiar el ranking.</p>
